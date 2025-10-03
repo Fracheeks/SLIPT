@@ -1,0 +1,20 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.espIdfPath": "/Users/fdime/esp/esp-idf",
+  "idf.pythonInstallPath": "/opt/homebrew/bin/python3",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "idf.port": "/dev/tty.usbserial-0143511B",
+  "idf.toolsPath": "/Users/fdime/.espressif",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32"
+  },
+  "clangd.path": "/Users/fdime/.espressif/tools/esp-clang/esp-19.1.2_20250312/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=/Users/fdime/.espressif/tools/xtensa-esp-elf/esp-15.1.0_20250607/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc",
+    "--compile-commands-dir=${workspaceFolder}/build"
+  ],
+  "idf.flashType": "UART"
+}

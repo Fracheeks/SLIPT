@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/Users/fdime/SLIPT_Rx/build/CMakeFiles/bootloader
+/Users/fdime/SLIPT_Rx/build/CMakeFiles/bootloader.rule
+/Users/fdime/SLIPT_Rx/build/CMakeFiles/bootloader-complete.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/Users/fdime/SLIPT_Rx/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

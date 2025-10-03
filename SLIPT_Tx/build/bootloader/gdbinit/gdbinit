@@ -1,0 +1,2 @@
+source /Users/fdime/SLIPT_Tx/build/bootloader/gdbinit/symbols
+source /Users/fdime/SLIPT_Tx/build/bootloader/gdbinit/connect

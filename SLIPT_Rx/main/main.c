@@ -6,11 +6,11 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 
-#include "s1.h"
+#include "s2.h"
 
 #define ADG819_CTRL_PIN 25   // GPIO connected to ADG819 IN pin
-#define Timer1 2000           // in milliseconds
-#define Timer2 1000           // in milliseconds
+#define Timer1 20000           // in milliseconds
+#define Timer2 10000           // in milliseconds
 
 
 // Function prototype
@@ -40,9 +40,10 @@ void ADG819_Set(bool connectToS1)
     // ESP-IDF uses 0/1 instead of LOW/HIGH
     gpio_set_level(ADG819_CTRL_PIN, connectToS1 ? 0 : 1);
     if(connectToS1)
-      {start_s1();}
+      {//S1 : ENERGY HARVESTING
+    }
     else{
-       //S2 : ENERGY HARVESTING
+       start_s2();
     }
 
 }

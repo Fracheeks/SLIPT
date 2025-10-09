@@ -17,7 +17,8 @@
     "--compile-commands-dir=${workspaceFolder}/build"
   ],
   "files.associations": {
-    "adc_oneshot.h": "c"
+    "adc_oneshot.h": "c",
+    "sdkconfig.h": "c"
   },
   "idf.flashType": "UART"
 }

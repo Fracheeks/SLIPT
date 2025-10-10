@@ -8,7 +8,7 @@
 
 #include "s2.h"
 
-#define ADG819_CTRL_PIN 25   // GPIO connected to ADG819 IN pin
+#define ADG819_CTRL_PIN 13   // GPIO connected to ADG819 IN pin
 #define Timer1 20000           // in milliseconds
 #define Timer2 10000           // in milliseconds
 

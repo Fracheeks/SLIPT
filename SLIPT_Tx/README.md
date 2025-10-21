@@ -18,10 +18,28 @@ ESP32 GPIO ──[Rb=650Ω]──> Base (B)
 Collector (C)── Laser ──[Rc=75Ω]── +3.3V  
 Emitter (E) ──> GND
 
-## Software
-The ESP32 toggles the GPIO pin to switch the laser **ON/OFF**, or can use **PWM** to set discrete intensity levels.  
+# ESP32 Laser Transmitter (2-bit PWM)
 
-Example behavior:  
-- GPIO HIGH → Laser ON  
-- GPIO LOW → Laser OFF  
+This project uses an ESP32 to transmit data via a laser using **PWM (Pulse Width Modulation)** with **4 intensity levels** representing 2-bit symbols.
+
+## How It Works
+
+- **PWM** switches the laser ON/OFF rapidly to create different perceived intensities.
+- Each **byte** is split into **4 symbols** (2 bits each).
+- Each 2-bit symbol sets the **PWM duty cycle**:
+
+| Symbol | Duty Cycle | Description      |
+|--------|------------|----------------|
+| 00     | 0%         | OFF             |
+| 01     | 33%        | Low             |
+| 10     | 66%        | Medium          |
+| 11     | 100%       | High            |
+
+- Each symbol is transmitted for a fixed duration (`SYMBOL_PERIOD_MS`) for decoding by a receiver.
+
+## Features
+
+- Transmit any string or byte stream via laser.
+- Safe PWM control for the laser diode.
+- Adjustable symbol duration and PWM frequency.
 

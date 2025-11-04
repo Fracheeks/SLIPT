@@ -1,3 +1,4 @@
 idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS "."
-                    REQUIRES driver esp_adc S1 S2)
+                    REQUIRES driver  S1 S2 Ambiqsuite
+                    )

@@ -1,75 +1,77 @@
-#include <string.h>
-#include "sdkconfig.h"
-#include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+// #include "am_mcu_apollo.h"
+#include "am_bsp.h"
+#include "am_util.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "s2.h"
 
-#include "esp_adc/adc_oneshot.h"
-#include "hal/adc_types.h"
-
-#include "esp_adc/adc_cali_scheme.h"
-#include "esp_adc/adc_cali.h"
-
-/*
-This code sample prints out the ADC input in the monitor.
-*/
-
-// ONE SHOT MODE : ADC conversion only happens when you instruct it.
+#define ADC_PIN            26    // physical pin connected to solar panel
+#define ADC_SLOT           0     // ADC slot 0
+#define ADC_SAMPLE_DELAY   100   // ms between samples
 
 TaskHandle_t ADCTaskHandle = NULL;
+am_hal_adc_config_t g_sADCConfig;
+void *g_ADCHandle;
 
-void ADCTask(void *arg){
-    int solar_panel_read, solar_panel_output;
-    
-    /*                        CREATE ADC UNIT                           */
+void ADCTask(void *pvParameters);
+void start_s2(void);
+void display_ADC_values(uint32_t ui32Sample)
 
-    adc_oneshot_unit_handle_t handle = NULL;
 
-    adc_oneshot_unit_init_cfg_t init_config1 = {
-    .unit_id = ADC_UNIT_2, //ADC_UNIT_1 → ADC1 (channels on GPIO32–39 for ESP32)
-                           //ADC_UNIT_2 → ADC2 (channels on GPIO0, 2, 4, 12–15, 25–27 for ESP32)
+void ADCTask(void *pvParameters)
+{
+    // Enable ADC module
+    am_hal_adc_initialize(0, &g_ADCHandle);
+    am_hal_adc_power_control(g_ADCHandle, AM_HAL_SYSCTRL_WAKE, false);
 
-    .ulp_mode = ADC_ULP_MODE_DISABLE,
+    // ADC configuration
+    g_sADCConfig.eClock = AM_HAL_ADC_CLKSEL_HFRC_DIV2;
+    g_sADCConfig.ePolarity = AM_HAL_ADC_TRIGPOL_RISING;
+    g_sADCConfig.eTrigger = AM_HAL_ADC_TRIGSEL_SOFT;
+    g_sADCConfig.eReference = AM_HAL_ADC_REFSEL_INT_2P0; // 2.0V internal reference
+    g_sADCConfig.eClockMode = AM_HAL_ADC_CLKMODE_LOW_POWER;
+    g_sADCConfig.eRepeat = AM_HAL_ADC_REPEAT_SINGLE;
+    g_sADCConfig.ePowerMode = AM_HAL_ADC_LPMODE1;
+    am_hal_adc_configure(g_ADCHandle, &g_sADCConfig);
+
+    // ADC slot configuration (select channel and averaging)
+    am_hal_adc_slot_config_t sSlotCfg = {
+        .bEnabled = true,
+        .eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1, // AVG_1 = no averaging, one sample (Change to AVG_N to average multiple samples)
+        .eChannel = AM_HAL_ADC_SLOT_CHSEL_SE0,  // ADC channel 0
+        .ePrecisionMode = AM_HAL_ADC_SLOT_12BIT,
+        .bWindowCompare = false,
     };
+    am_hal_adc_configure_slot(g_ADCHandle, ADC_SLOT, &sSlotCfg);
 
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config1, &handle));
+    am_hal_adc_enable(g_ADCHandle);
 
-    adc_oneshot_chan_cfg_t config = {
-    .bitwidth = ADC_BITWIDTH_12, // max resolution is 12 bits, which means a voltage level between 0 and 4095 (2^12 -1)
-    .atten = ADC_ATTEN_DB_12, //up to 3.9 V for a Vref of 1.1 Volt
-    };
-
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(handle, ADC_CHANNEL_9, &config));
-
-    
-    /*                          CALIBRATION                             */
-
-    adc_cali_handle_t cali_handle = NULL;
-
-    adc_cali_line_fitting_config_t cali_config = {
-        .unit_id = ADC_UNIT_2,
-        .atten = ADC_ATTEN_DB_12,
-        .bitwidth = ADC_BITWIDTH_11,
-    };
-
-    ESP_ERROR_CHECK(adc_cali_create_scheme_line_fitting(&cali_config, &cali_handle));
-
-    /*          READ RAW ADC INPUT AND CONVERT TO MILIVOLTS             */
-    while(1)
+    while (1)
     {
-        ESP_ERROR_CHECK(adc_oneshot_read(handle, ADC_CHANNEL_9, &solar_panel_read)); // ADC2_CHL 9 , GPIO26 , A0
-        printf(" ADC input from solar panel:   %d \n", solar_panel_read);
-        adc_cali_raw_to_voltage(cali_handle, solar_panel_read, &solar_panel_output);
-        printf(" Milivolt output after calibration %d \n", solar_panel_output);
-        printf("\n * \n\n");
+        am_hal_adc_sw_trigger(g_ADCHandle);
 
-        vTaskDelay(100);
+        am_hal_adc_sample_t Sample;
+        uint32_t ui32NumSamples = 1;
+        am_hal_adc_samples_read(g_ADCHandle, true, NULL, &ui32NumSamples, &Sample);
+
+        display_ADC_values(Sample.ui32Sample);
+
+        vTaskDelay(pdMS_TO_TICKS(ADC_SAMPLE_DELAY));
     }
-    adc_oneshot_del_unit(handle);
-    adc_cali_delete_scheme_line_fitting(cali_handle);
+
+    am_hal_adc_disable(g_ADCHandle);
+    am_hal_adc_deinitialize(g_ADCHandle);
     vTaskDelete(NULL);
 }
 
-void start_s2(void){
-    xTaskCreatePinnedToCore(ADCTask, "ADC Task", 4096, NULL, 10, &ADCTaskHandle, 0);
+void display_ADC_values(uint32_t ui32Sample){
+        
+        am_util_stdio_printf("ADC raw: %d\n", ui32Sample);
+        am_util_stdio_printf("ADC voltage: %.2f mV\n\n", (ui32Sample / 4095.0f) * 2000.0f); // Scale to 2.0V ref
+
+}s
+
+void start_s2(void)
+{
+    xTaskCreate(ADCTask, "ADC Task", 1024, NULL, 2, &ADCTaskHandle); //5th paramter is the priority (higher number = higher priority)
 }

@@ -1,3 +1,0 @@
-[submodule "SLIPT_Rx/AmbiqSuite"]
-	path = SLIPT_Rx/AmbiqSuite
-	url = https://github.com/sparkfun/AmbiqSuiteSDK.git

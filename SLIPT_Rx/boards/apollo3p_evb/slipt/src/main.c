@@ -6,12 +6,10 @@
 #include "FreeRTOS.h" 
 #include "task.h"
 
-// --- Configuration Defines ---
 #define ADG819_CTRL_PIN 5   // Apollo3 GPIO pin number
-#define TIMER1_MS 20000     // 20 seconds for S1 (Energy Harvesting)
-#define TIMER2_MS 10000     // 10 seconds for S2 (Data Analysis)
+#define TIMER1_MS 20000    
+#define TIMER2_MS 10000     
 
-// Function prototype defined in this file
 void ADG819_Set(bool connectToS1);
 void MainAppTask(void *pvParameters);
 
@@ -20,8 +18,7 @@ int main(void)
     // Core Setup
     setup();
 
-    // Initial Output Check
-    am_util_stdio_printf("\n*** System Setup Complete. Starting FreeRTOS. ***\n");
+    am_util_stdio_printf("\n*** System Setup Complete. Starting... ***\n");
 
     // Configure Control Pin
     am_hal_gpio_pinconfig(ADG819_CTRL_PIN, g_AM_HAL_GPIO_OUTPUT);
@@ -36,10 +33,9 @@ int main(void)
         NULL                         
     );
 
-    // Start the scheduler - this function never returns.
+    // Start the scheduler
     vTaskStartScheduler();
 
-    // Should never reach here
     while(1);
 }
 
@@ -71,7 +67,7 @@ void ADG819_Set(bool connectToS1)
     if (connectToS1)
     {
         // S1: Energy Harvesting
-        // 1. STOP the ADC task before entering the long S1 phase.
+        // 1. STOP the ADC task S2 before entering the long S1 phase.
         stop_s2(); 
 
         // 2. Set the control pin to Logic Low
@@ -83,7 +79,7 @@ void ADG819_Set(bool connectToS1)
         // 1. Set the control pin to Logic High
         am_hal_gpio_output_set(ADG819_CTRL_PIN); 
 
-        // 2. Start the S2 analysis function
+        // 2. Start S2
         start_s2();
     }
 }

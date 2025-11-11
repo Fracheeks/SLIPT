@@ -30,7 +30,7 @@ const am_hal_gpio_pincfg_t g_sPinCfgADC =
 
 void ADCTask(void *pvParameters)
 {
-    // 1. GPIO CONFIGURATION: Configure GPIO 13 (the physical pin) as the ADC input (Channel SE2).
+    // 1. GPIO CONFIGURATION: Configure GPIO 13 (the physical pin) as the ADC input (Channel SE8).
 
     am_hal_gpio_pinconfig(13, g_sPinCfgADC);
 
@@ -46,7 +46,7 @@ void ADCTask(void *pvParameters)
     g_sADCConfig.ePowerMode = AM_HAL_ADC_LPMODE1;
     am_hal_adc_configure(g_ADCHandle, &g_sADCConfig);
 
-    // 2. SLOT CONFIGURATION: Select Channel 2 (SE2), which is mapped to GPIO 13.
+    // 2. SLOT CONFIGURATION: Select Channel 8 (SE8), which is mapped to GPIO 13.
     am_hal_adc_slot_config_t sSlotCfg = {
         .bEnabled = true,
         .eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1, // No averaging
@@ -100,22 +100,16 @@ void display_ADC_values(uint32_t ui32Sample){
 
 
 void start_s2(void){
-    // Only create the task if it's not already running
-    if (ADCTaskHandle == NULL) {
-        am_util_stdio_printf("S2: Creating ADC Task.\n");
+    
+    if (ADCTaskHandle == NULL) { // Only create the task if it's not already running
         xTaskCreate(ADCTask, "ADC Task", 1024, NULL, 2, &ADCTaskHandle); 
-    } else {
-        am_util_stdio_printf("S2: ADC Task is already active.\n");
-    }
+    };
 }
 
-// Add this new function at the end of ../components/S2/s2.c
-
 void stop_s2(void){
+
     // Stop the task safely by setting the flag to false
     if (ADCTaskHandle != NULL) {
-        am_util_stdio_printf("S2: Stopping and deleting ADC Task.\n");
         g_bADCTaskRunning = false;
-        // The task will delete itself in the cleanup block of ADCTask
     }
 }

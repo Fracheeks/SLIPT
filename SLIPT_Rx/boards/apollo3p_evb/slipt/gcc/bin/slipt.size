@@ -3,9 +3,9 @@
     334	      0	    512	    846	    34e	bin/am_util_faultisr.o
     401	      0	      0	    401	    191	bin/am_util_id.o
    3971	      0	   1029	   5000	   1388	bin/am_util_stdio.o
-    423	      0	      0	    423	    1a7	bin/main.o
+    419	      0	      0	    419	    1a3	bin/main.o
     556	      0	    266	    822	    336	bin/setup.o
-    621	      0	     16	    637	    27d	bin/s2.o
+    489	      0	     16	    505	    1f9	bin/s2.o
     404	   4096	      0	   4500	   1194	bin/startup_gcc.o
    8319	      0	    240	   8559	   216f	bin/tasks.o
    1798	      4	     21	   1823	    71f	bin/port.o
@@ -51,4 +51,4 @@
     427	      0	      0	    427	    1ab	am_hal_wdt.o (ex ../../../../mcu/apollo3p/hal/gcc/bin/libam_hal.a)
    3540	    128	   2080	   5748	   1674	am_bsp.o (ex ../../bsp/gcc/bin/libam_bsp.a)
     396	      0	      0	    396	    18c	am_bsp_pins.o (ex ../../bsp/gcc/bin/libam_bsp.a)
-  26616	     56	  22956	  49628	   c1dc	bin/slipt.axf
+  26480	     56	  22956	  49492	   c154	bin/slipt.axf

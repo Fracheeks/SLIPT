@@ -30,7 +30,7 @@ const am_hal_gpio_pincfg_t g_sPinCfgADC =
 
 void ADCTask(void *pvParameters)
 {
-    // 1. GPIO CONFIGURATION: Configure GPIO 13 (the physical pin) as the ADC input (Channel SE8).
+    // 1. GPIO CONFIGURATION: Configure GPIO 13 (the physical pin) as the ADC input (Channel SE2).
 
     am_hal_gpio_pinconfig(13, g_sPinCfgADC);
 
@@ -46,7 +46,7 @@ void ADCTask(void *pvParameters)
     g_sADCConfig.ePowerMode = AM_HAL_ADC_LPMODE1;
     am_hal_adc_configure(g_ADCHandle, &g_sADCConfig);
 
-    // 2. SLOT CONFIGURATION: Select Channel 8 (SE8), which is mapped to GPIO 13.
+    // 2. SLOT CONFIGURATION: Select Channel 2 (SE2), which is mapped to GPIO 13.
     am_hal_adc_slot_config_t sSlotCfg = {
         .bEnabled = true,
         .eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1, // No averaging
@@ -69,7 +69,7 @@ void ADCTask(void *pvParameters)
         uint32_t ui32NumSamples = 1;
         
         // Read the sample, waiting for the conversion to finish
-        am_hal_adc_samples_read(g_ADCHandle, true, NULL, &ui32NumSamples, &Sample);
+        am_hal_adc_samples_read(g_ADCHandle, false, NULL, &ui32NumSamples, &Sample);
 
         // Display the raw and calculated voltage values
         display_ADC_values(Sample.ui32Sample);
@@ -90,26 +90,29 @@ void ADCTask(void *pvParameters)
 void display_ADC_values(uint32_t ui32Sample){
         
         // Print the raw 12-bit ADC value
-        am_util_stdio_printf("ADC raw: %d\n", ui32Sample);
+        am_util_stdio_printf("ADC raw: %d\r\n", ui32Sample);
         
         // Calculate and print the voltage in millivolts (mV).
         // Scaling formula: (Raw Value / 4095.0) * Reference Voltage (2000 mV)
-        am_util_stdio_printf("ADC voltage: %.2f mV\n\n", (ui32Sample / 4095.0f) * 2000.0f); 
+        am_util_stdio_printf("ADC voltage: %.2f mV\r\n\r\n", (ui32Sample / 4095.0f) * 2000.0f); 
 
 }
 
 
 void start_s2(void){
-    
-    if (ADCTaskHandle == NULL) { // Only create the task if it's not already running
+    // Only create the task if it's not already running
+    if (ADCTaskHandle == NULL) {
+        am_util_stdio_printf("S2: Creating ADC Task.\r\n");
         xTaskCreate(ADCTask, "ADC Task", 1024, NULL, 2, &ADCTaskHandle); 
-    };
+    } else {
+        am_util_stdio_printf("S2: ADC Task is already active.\r\n");
+    }
 }
 
 void stop_s2(void){
-
     // Stop the task safely by setting the flag to false
     if (ADCTaskHandle != NULL) {
+        am_util_stdio_printf("S2: Stopping and deleting ADC Task.\r\n");
         g_bADCTaskRunning = false;
     }
 }

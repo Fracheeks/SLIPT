@@ -14,8 +14,8 @@ The ESP32 drives the laser through an **NPN transistor switch** with a series re
 - Laser diode + series resistor connected between **3.3V** and transistor collector  
 
 ### Simplified Wiring
-ESP32 GPIO ──[Rb=650Ω]──> Base (B)  
-Collector (C)── Laser ──[Rc=75Ω]── +3.3V  
+ESP32 GPIO ──> Base (B)  
+Collector (C)── Laser ── +3.3V  
 Emitter (E) ──> GND
 
 # ESP32 Laser Transmitter (2-bit PWM)
